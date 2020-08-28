@@ -14,7 +14,10 @@ class SubscriptionQuerySet(models.QuerySet):
         content_object=kwargs.pop('content_object', None)
         if content_object:
             kwargs['content_type']=ContentType.objects.get_for_model(content_object._meta.model)
-            kwargs['object_id']=content_object.pk
+            try:
+                kwargs['object_id']=int(content_object.pk)
+            except ValueError:
+                return self.none()
         return super().filter(*args, **kwargs)
     
     def get_or_prepare(self, user, content_object):
