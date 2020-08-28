@@ -32,9 +32,12 @@ class SubscriptionMixin:
         return HttpResponseRedirect(self.request.path)
     
     def get_subscription(self):
-        return Subscription.objects.get_or_prepare(
-            user=self.request.user, 
-            content_object=self.subscription_trigger)
+        if self.subscription_trigger:
+            return Subscription.objects.get_or_prepare(
+                user=self.request.user, 
+                content_object=self.subscription_trigger)
+        else:
+            return None
     
     @cached_property
     def subscription_trigger(self):
