@@ -1,3 +1,4 @@
+import re
 from django.db import models
 from django.conf import settings 
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -48,7 +49,7 @@ def notify_subscribers(instance, **kwargs):
     if not recipients:
         return
     
-    send_mail(subject = render_template(instance, "title.djtxt"), 
+    send_mail(subject = re.sub(r"\s+", " ", render_template(instance, "title.djtxt")).strip(), 
               message = render_template(instance, "message.djtxt"), 
               from_email=settings.DEFAULT_FROM_EMAIL, 
               recipient_list=recipients, 
