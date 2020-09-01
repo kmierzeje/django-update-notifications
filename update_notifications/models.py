@@ -1,4 +1,5 @@
 import re
+import logging
 from django.db import models
 from django.conf import settings 
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -7,6 +8,8 @@ from django.dispatch.dispatcher import receiver
 from django.db.models.signals import post_save
 from django.core.mail import send_mail
 from .utils import render_template
+
+logger=logging.getLogger(__name__)
 
 # Create your models here.
 class SubscriptionQuerySet(models.QuerySet):
@@ -48,10 +51,12 @@ def notify_subscribers(instance, **kwargs):
         content_object=instance).values_list("user__email", flat=True))
     if not recipients:
         return
-    
-    send_mail(subject = re.sub(r"\s+", " ", render_template(instance, "title.djtxt")).strip(), 
-              message = render_template(instance, "message.djtxt"), 
-              from_email=settings.DEFAULT_FROM_EMAIL, 
-              recipient_list=recipients, 
-              html_message = render_template(instance, "message.djhtml"),
-              fail_silently=True)
+    try:
+        send_mail(subject = re.sub(r"\s+", " ", render_template(instance, "title.djtxt")).strip(), 
+                  message = render_template(instance, "message.djtxt"), 
+                  from_email=settings.DEFAULT_FROM_EMAIL, 
+                  recipient_list=recipients, 
+                  html_message = render_template(instance, "message.djhtml"),
+                  fail_silently=True)
+    except Exception:
+        logger.exception(f"Exception raised when sending {instance} update notification")
