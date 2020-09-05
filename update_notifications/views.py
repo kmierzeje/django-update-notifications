@@ -15,7 +15,7 @@ class SubscriptionMixin:
     
     def subscribe(self):
         subscription = self.get_subscription()
-        if not subscription.pk:
+        if subscription and not subscription.pk:
             subscription.save()
             title = render_template(self.subscription_trigger, "title.djtxt")
             messages.add_message(self.request, messages.INFO, 
@@ -24,7 +24,7 @@ class SubscriptionMixin:
     
     def unsubscribe(self):
         subscription = self.get_subscription()
-        if subscription.pk:
+        if subscription and subscription.pk:
             subscription.delete()
             title = render_template(self.subscription_trigger, "title.djtxt")
             messages.add_message(self.request, messages.INFO, 

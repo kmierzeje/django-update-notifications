@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 setuptools.setup(
     author='Kamil Mierzejewski',
     name='django-update-notifications',
-    version='0.1.3',
+    version='0.1.4',
     description='A framework for sending e-mail notifications about model updates.',
     long_description=long_description,
     long_description_content_type='text/markdown',
