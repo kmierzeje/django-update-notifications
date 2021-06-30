@@ -5,9 +5,10 @@ from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.dispatch.dispatcher import receiver
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_migrate
 from django.core.mail import send_mail
 from .utils import render_template
+from django.db.utils import IntegrityError
 
 logger=logging.getLogger(__name__)
 
@@ -60,3 +61,7 @@ def notify_subscribers(instance, **kwargs):
                   fail_silently=True)
     except Exception:
         logger.exception(f"Exception raised when sending {instance} update notification")
+
+@receiver(pre_migrate)
+def disconnect_notify(sender, **kwargs):
+    post_save.disconnect(notify_subscribers)
