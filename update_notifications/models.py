@@ -1,14 +1,16 @@
-import re
 import logging
-from django.db import models
+import re
+
 from django.conf import settings 
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
-from django.dispatch.dispatcher import receiver
-from django.db.models.signals import post_save, pre_migrate
 from django.core.mail import send_mail
+from django.db import models
+from django.db.models.signals import post_save, pre_migrate
+from django.dispatch.dispatcher import receiver
+
 from .utils import render_template
-from django.db.utils import IntegrityError
+
 
 logger=logging.getLogger(__name__)
 
